@@ -35,17 +35,18 @@ const MainPage: React.FC<Props> = ({ onLogout }) => {
     fetch('https://corsproxy.io/?http://my-json-server.typicode.com/EnkiGroup/DesafioFrontEnd2026Jr/menus')
       .then(r => r.json())
       .then(data => {
-        console.log('menus:', data);
         setMenus(data);
       });
   }, []);
 
   useEffect(() => {
-    if (selectedMenuId === null) return;
+    console.log('selectedMenuId changed:', selectedMenuId);
+if (selectedMenuId === null) return;
     fetch(`https://corsproxy.io/?http://my-json-server.typicode.com/EnkiGroup/DesafioFrontEnd2026Jr/items/${selectedMenuId}`)
       .then(r => r.json())
       .then(data => {
         const list = data.subMenuItems || (Array.isArray(data) ? data : [data]);
+        console.log('items recebidos:', list);
         setItems(list);
       });
   }, [selectedMenuId]);
@@ -101,7 +102,7 @@ const MainPage: React.FC<Props> = ({ onLogout }) => {
       </div>
 
       {/* BODY */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', flexDirection: window.innerWidth < 600 ? 'column' : 'row' }}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', flexDirection: 'row' }}>
         <Sidebar
           menus={menus}
           selectedId={selectedMenuId}

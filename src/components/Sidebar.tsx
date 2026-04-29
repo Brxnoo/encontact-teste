@@ -20,7 +20,7 @@ interface Props {
 }
 
 const Sidebar: React.FC<Props> = ({ menus, selectedId, onSelect, theme, t }) => {
-  const [expanded, setExpanded] = useState<number[]>([]);
+  const [expanded, setExpanded] = useState<number[]>([1, 2, 3]);
 
   const panel = theme === 'dark' ? '#16213e' : '#fff';
   const fg = theme === 'dark' ? '#fff' : '#1a1a2e';
@@ -30,7 +30,7 @@ const Sidebar: React.FC<Props> = ({ menus, selectedId, onSelect, theme, t }) => 
     setExpanded(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
   return (
-    <div style={{ width: '100%', background: panel, borderBottom: '1px solid #ddd',
+    <div style={{ width: 240, minWidth: 240, background: panel, borderRight: '1px solid #ddd',
       overflowY: 'auto', flexShrink: 0, padding: '1rem 0' }}>
       <div style={{ padding: '0 1rem 0.5rem', fontWeight: 'bold',
         fontSize: '0.75rem', color: '#999', textTransform: 'uppercase' }}>
@@ -50,8 +50,9 @@ const Sidebar: React.FC<Props> = ({ menus, selectedId, onSelect, theme, t }) => 
             </span>
           </div>
 
-          {expanded.includes(menu.id) && menu.subMenus.map(sub => (
-            <div key={sub.id} onClick={() => onSelect(sub.id)}
+          {expanded.includes(menu.id) && menu.subMenus && menu.subMenus.map(sub => (
+            <div key={sub.id}
+              onClick={(e) => { e.stopPropagation(); onSelect(sub.id); }}
               style={{ padding: '0.4rem 1rem 0.4rem 2rem', cursor: 'pointer',
                 color: selectedId === sub.id ? '#2E75B6' : fg,
                 background: selectedId === sub.id ? hover : 'transparent',
