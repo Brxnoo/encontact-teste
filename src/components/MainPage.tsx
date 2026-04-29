@@ -28,25 +28,28 @@ const MainPage: React.FC<Props> = ({ onLogout }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [lang, setLang] = useState<'pt' | 'en'>('pt');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const t = (pt: string, en: string) => lang === 'pt' ? pt : en;
 
- useEffect(() => {
-    fetch('https://corsproxy.io/?http://my-json-server.typicode.com/EnkiGroup/DesafioFrontEnd2026Jr/menus')
-      .then(r => r.json())
-      .then(data => {
-        setMenus(data);
-      });
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
-    console.log('selectedMenuId changed:', selectedMenuId);
-if (selectedMenuId === null) return;
+    fetch('https://corsproxy.io/?http://my-json-server.typicode.com/EnkiGroup/DesafioFrontEnd2026Jr/menus')
+      .then(r => r.json())
+      .then(data => setMenus(data));
+  }, []);
+
+  useEffect(() => {
+    if (selectedMenuId === null) return;
     fetch(`https://corsproxy.io/?http://my-json-server.typicode.com/EnkiGroup/DesafioFrontEnd2026Jr/items/${selectedMenuId}`)
       .then(r => r.json())
       .then(data => {
         const list = data.subMenuItems || (Array.isArray(data) ? data : [data]);
-        console.log('items recebidos:', list);
         setItems(list);
       });
   }, [selectedMenuId]);
@@ -61,27 +64,22 @@ if (selectedMenuId === null) return;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: bg, color: fg }}>
-      {/* TOPBAR */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0.5rem 1rem', background: panel, borderBottom: '1px solid #ddd', flexShrink: 0 }}>
         <div style={{ position: 'relative' }}>
-          <div
-            onClick={() => setShowUserMenu(!showUserMenu)}
+          <div onClick={() => setShowUserMenu(!showUserMenu)}
             style={{ width: 36, height: 36, borderRadius: '50%', background: '#2E75B6',
               color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 'bold', cursor: 'pointer', userSelect: 'none' }}
-          >
+              fontWeight: 'bold', cursor: 'pointer', userSelect: 'none' }}>
             OA
           </div>
           {showUserMenu && (
             <div style={{ position: 'absolute', top: 44, left: 0, background: panel,
               border: '1px solid #ccc', borderRadius: 6, padding: '0.5rem',
               boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 100, minWidth: 120 }}>
-              <div
-                onClick={onLogout}
+              <div onClick={onLogout}
                 style={{ cursor: 'pointer', padding: '0.4rem 0.8rem', borderRadius: 4,
-                  color: 'red', fontWeight: 'bold' }}
-              >
+                  color: 'red', fontWeight: 'bold' }}>
                 {t('Sair', 'Logout')}
               </div>
             </div>
@@ -101,14 +99,14 @@ if (selectedMenuId === null) return;
         </div>
       </div>
 
-      {/* BODY */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', flexDirection: 'row' }}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', flexDirection: isMobile ? 'column' : 'row' }}>
         <Sidebar
           menus={menus}
           selectedId={selectedMenuId}
           onSelect={setSelectedMenuId}
           theme={theme}
           t={t}
+          isMobile={isMobile}
         />
         <ItemList
           items={items}

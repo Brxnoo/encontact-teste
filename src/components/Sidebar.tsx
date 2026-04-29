@@ -17,9 +17,10 @@ interface Props {
   onSelect: (id: number) => void;
   theme: 'light' | 'dark';
   t: (pt: string, en: string) => string;
+  isMobile: boolean;
 }
 
-const Sidebar: React.FC<Props> = ({ menus, selectedId, onSelect, theme, t }) => {
+const Sidebar: React.FC<Props> = ({ menus, selectedId, onSelect, theme, t, isMobile }) => {
   const [expanded, setExpanded] = useState<number[]>([1, 2, 3]);
 
   const panel = theme === 'dark' ? '#16213e' : '#fff';
@@ -30,8 +31,16 @@ const Sidebar: React.FC<Props> = ({ menus, selectedId, onSelect, theme, t }) => 
     setExpanded(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
   return (
-    <div style={{ width: 240, minWidth: 240, background: panel, borderRight: '1px solid #ddd',
-      overflowY: 'auto', flexShrink: 0, padding: '1rem 0' }}>
+    <div style={{
+      width: isMobile ? '100%' : 240,
+      minWidth: isMobile ? '100%' : 240,
+      background: panel,
+      borderRight: isMobile ? 'none' : '1px solid #ddd',
+      borderBottom: isMobile ? '1px solid #ddd' : 'none',
+      overflowY: 'auto',
+      flexShrink: 0,
+      padding: '1rem 0'
+    }}>
       <div style={{ padding: '0 1rem 0.5rem', fontWeight: 'bold',
         fontSize: '0.75rem', color: '#999', textTransform: 'uppercase' }}>
         {t('Menu', 'Menu')}
