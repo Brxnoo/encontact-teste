@@ -43,7 +43,7 @@ const Sidebar: React.FC<Props> = ({ menus, selectedId, onSelect, theme, t, isMob
     }}>
       <div style={{ padding: '0 1rem 0.5rem', fontWeight: 'bold',
         fontSize: '0.75rem', color: '#999', textTransform: 'uppercase' }}>
-        {t('Menu', 'Menu')}
+       {t('Menu', 'Menu navigation')}
       </div>
 
       {menus.map(menu => (
